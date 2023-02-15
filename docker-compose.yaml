@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - '5432:5432'
+    env_file:
+      - ./server/.env.dev
+    volumes:
+      - ./server/db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - data:/var/lib/postgres/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build: ./server
+    ports:
+      - "8000:8000"
+    volumes:
+      - logs:/app/logs
+      - ./server:/app
+      - /app/node_modules
+    env_file:
+      - ./server/.env.dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  data:
+  logs:
