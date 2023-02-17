@@ -47,22 +47,13 @@ exports.isAuthenticated = async (req, res, next) => {
 };
 
 function validateEmail(email) {
-  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-    return true;
-  }
-  return false;
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 }
 
 function validateMobileNumber(mobile_number) {
-  if (mobile_number && mobile_number.length >= 10) {
-    return true;
-  }
-  return false;
+  return mobile_number && mobile_number.length >= 10;
 }
 
 function validatePassword(password) {
-  if (password.length >= 8) {
-    return true;
-  }
-  return false;
+  return password.length >= 8;
 }
