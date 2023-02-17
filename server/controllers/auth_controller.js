@@ -68,13 +68,41 @@ exports.signup = async (req, res) => {
 			res.status(500).json({ error: "Internal Server Error" });
 		}
 	}
-	res.send("Signup");
 };
 
 exports.logout = async (req, res) => {
+	// Logout and delete the user_token from the database
+	let query = "DELETE FROM User_Tokens WHERE user_id = $1";
+	let values = [req.user.id];
+	try {
+		const result = await client.query(query, values);
+		if (result.rowCount === 0) {
+			return res.status(404).json({ error: "User not found." });
+		} else {
+			return res
+				.status(200)
+				.json({ message: "User logged out successfully." });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ error: "Internal Server Error." });
+	}
 	res.send("Logout");
 };
 
 exports.profile = async (req, res) => {
-	res.send("Profile");
+	// Get the user profile
+	let query = "SELECT * FROM Users WHERE id = $1";
+	let values = [req.user.id];
+	try {
+		let data = await client.query(query, values);
+		if (data.rowCount === 0) {
+			return res.status(404).json({ error: "User not found." });
+		} else {
+			return res.status(200).json({ data: data.rows[0] });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ error: "Internal Server Error." });
+	}
 };

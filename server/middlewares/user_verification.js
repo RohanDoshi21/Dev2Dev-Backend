@@ -9,10 +9,10 @@ exports.validateUserData = (req, res, next) => {
       return res.status(400).json({ error: "Field Empty" });
     }
   }
-  const { email, mobile_number, password } = req.body;
+  const { email, phone_number, password } = req.body;
   if (
     validateEmail(email) &&
-    validateMobileNumber(mobile_number) &&
+    validateMobileNumber(phone_number) &&
     validatePassword(password)
   ) {
     next();
