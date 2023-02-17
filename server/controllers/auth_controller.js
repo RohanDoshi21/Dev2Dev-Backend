@@ -1,5 +1,6 @@
 const client = require("../db/connect");
 const generateUserToken = require("../utils/userToken");
+
 exports.login = async (req, res) => {
 	let text = "select * from Users where email = $1";
 	let values = [req.body?.email?.toLowerCase()];
@@ -39,12 +40,12 @@ exports.signup = async (req, res) => {
 	let reputation = 0;
 	let values = [
 		req.body.first_name,
-        req.body.last_name,
+		req.body.last_name,
 		req.body.email.toLowerCase(),
-        req.body.phone_number,
+		req.body.phone_number,
 		encryptedPassword,
-        reputation,
-        req.body.dp_url,
+		reputation,
+		req.body.dp_url,
 		timestamp,
 		timestamp,
 	];
