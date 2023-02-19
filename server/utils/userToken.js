@@ -8,7 +8,7 @@ const generateUserToken = async (userId) => {
     const token = jwt.sign({ id: userId }, process.env.TOKEN_SECRET);
     let tokenRecord =
       "insert into UsersToken(token, is_valid, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)";
-    let tokenValues = [token, true, , userId, timestamp, timestamp];
+    let tokenValues = [token, true, userId, timestamp, timestamp];
     await client.query(tokenRecord, tokenValues);
     return token;
   } catch (err) {

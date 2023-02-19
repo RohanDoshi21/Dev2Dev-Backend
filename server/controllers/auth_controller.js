@@ -1,4 +1,6 @@
 const client = require("../db/connect");
+const bcrypt = require("bcryptjs");
+
 const generateUserToken = require("../utils/userToken");
 
 exports.login = async (req, res) => {
@@ -16,7 +18,7 @@ exports.login = async (req, res) => {
 				const user = data.rows[0];
 				delete user.password;
 				return res.json({
-					data: [token, user],
+					data: {token : token, user : user},
 				});
 			} else {
 				return res
@@ -72,7 +74,7 @@ exports.signup = async (req, res) => {
 
 exports.logout = async (req, res) => {
 	// Logout and delete the user_token from the database
-	let query = "DELETE FROM User_Tokens WHERE user_id = $1";
+	let query = "DELETE FROM UsersToken WHERE user_id = $1";
 	let values = [req.user.id];
 	try {
 		const result = await client.query(query, values);
@@ -87,12 +89,11 @@ exports.logout = async (req, res) => {
 		console.log(err);
 		return res.status(500).json({ error: "Internal Server Error." });
 	}
-	res.send("Logout");
 };
 
 exports.profile = async (req, res) => {
-	// Get the user profile
-	let query = "SELECT * FROM Users WHERE id = $1";
+	// Select everything from the user except the hashed password
+	let query = "SELECT id, first_name, last_name, email, phone_number, reputation, dp_url, created_at, updated_at FROM Users WHERE id = $1";
 	let values = [req.user.id];
 	try {
 		let data = await client.query(query, values);

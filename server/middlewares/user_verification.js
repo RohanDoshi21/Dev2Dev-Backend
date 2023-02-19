@@ -23,14 +23,14 @@ exports.validateUserData = (req, res, next) => {
 
 exports.isAuthenticated = async (req, res, next) => {
   try {
-    let query = "select * from UserToken where token = $1";
+    let query = "select * from UsersToken where token = $1";
     const token = req.header("Authorization").replace("Bearer ", "");
     let params = [token];
     const data = await client.query(query, params);
     if (data.rowCount < 1) {
       return res.status(401).json({ error: "Unauthorized user!" });
     }
-    const userId = data.rows[0].fk_customer;
+    const userId = data.rows[0].user_id;
     query =
       "SELECT id, first_name, last_name, email, phone_number, created_at, updated_at, reputation, dp_url from Users where id = $1";
     params = [userId];
