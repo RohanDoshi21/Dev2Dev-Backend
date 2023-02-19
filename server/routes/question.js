@@ -1,6 +1,12 @@
 let express = require("express");
 const { isAuthenticated } = require("../middlewares/user_verification");
-const { retrieveQuestions, retrieveQuestionById, createQuestion, updateQuestion, deleteQuestion } = require("../controllers/question_controller.js");
+const {
+	retrieveQuestions,
+	retrieveQuestionById,
+	createQuestion,
+	updateQuestion,
+	deleteQuestion,
+} = require("../controllers/question_controller");
 
 let router = express.Router();
 
