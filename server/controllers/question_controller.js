@@ -1,9 +1,15 @@
 const client = require("../db/connect");
 
 exports.retrieveQuestions = async (req, res) => {
-	let query = "select * from Question";
+    // Pagination logic
+    // Page size is defaulted to 10
+    let questionsPerPage = 10;
+    let page = parseInt(req.query.page) || 1;
+    let offset = (page - 1) * questionsPerPage;
+
+	let query = "select * from Question LIMIT $1 OFFSET $2";
 	try {
-		const data = await client.query(query);
+		const data = await client.query(query, [questionsPerPage, offset]);
 		return res.json({ data: { questions: data.rows } });
 	} catch (err) {
 		console.log(err);
