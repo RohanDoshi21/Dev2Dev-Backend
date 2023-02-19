@@ -18,7 +18,7 @@ exports.login = async (req, res) => {
 				const user = data.rows[0];
 				delete user.password;
 				return res.json({
-					data: {token : token, user : user},
+					data: { token: token, user: user },
 				});
 			} else {
 				return res
@@ -54,20 +54,20 @@ exports.signup = async (req, res) => {
 	try {
 		const data = await client.query(text, values);
 		const token = await generateUserToken(data.rows[0].id);
-		res.json({ data: { token: token, user: { ...data.rows[0] } } });
+		return res.json({ data: { token: token, user: { ...data.rows[0] } } });
 	} catch (err) {
 		console.log(err);
 		const duplicateError = err.message.split(" ").pop().replaceAll('"', "");
 		if (duplicateError === "users_email_key") {
-			res.status(409).json({
+			return res.status(409).json({
 				error: "User with this email already exists",
 			});
 		} else if (duplicateError === "users_phone_number_key") {
-			res.status(409).json({
+			return res.status(409).json({
 				error: "User with this mobile_number already exists",
 			});
 		} else {
-			res.status(500).json({ error: "Internal Server Error" });
+			return res.status(500).json({ error: "Internal Server Error" });
 		}
 	}
 };
