@@ -1,15 +1,14 @@
 const client = require("../db/connect");
 
 exports.retrieveQuestions = async (req, res) => {
-    let query = "select * from Question";
-    try {
-        const data = await client.query(query);
-        return res.json({ data: { questions: data.rows } });
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Internal Server Error." });
-    }
+	let query = "select * from Question";
+	try {
+		const data = await client.query(query);
+		return res.json({ data: { questions: data.rows } });
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ error: "Internal Server Error." });
+	}
 };
 
 exports.retrieveQuestionById = async (req, res) => {
@@ -30,8 +29,8 @@ exports.createQuestion = async (req, res) => {
 	];
 
 	try {
-        const data = await client.query(query, values);
-        return res.json({ data: { question: { ...data.rows[0] } } });
+		const data = await client.query(query, values);
+		return res.json({ data: { question: { ...data.rows[0] } } });
 	} catch (err) {
 		console.log(err);
 		return res.status(500).json({ error: "Internal Server Error." });
@@ -39,9 +38,47 @@ exports.createQuestion = async (req, res) => {
 };
 
 exports.updateQuestion = async (req, res) => {
-	res.send("updateQuestion");
+	let query =
+		"update Question set title = $1, description = $2 where id = $3 and owner = $4 returning *";
+	let values = [
+		req.body.title,
+		req.body.description,
+		parseInt(req.params.id),
+		req.user.id,
+	];
+
+	try {
+		const data = await client.query(query, values);
+		if (data.rows.length === 0) {
+			return res.status(404).json({
+				error: "Question not found or current user doesn't have permission to modify the question",
+			});
+		} else {
+			return res.json({ data: { question: { ...data.rows[0] } } });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ error: "Internal Server Error." });
+	}
 };
 
 exports.deleteQuestion = async (req, res) => {
-	res.send("deleteQuestion");
+	let query = "delete from Question where id = $1 and owner = $2 returning *";
+	let values = [parseInt(req.params.id), req.user.id];
+
+	try {
+		const data = await client.query(query, values);
+		if (data.rows.length === 0) {
+			return res
+				.status(404)
+				.json({
+					error: "Question not found or current user doesn't have permission to delete the question",
+				});
+		} else {
+			return res.json({ data: "Question deleted successfully" });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ error: "Internal Server Error." });
+	}
 };
