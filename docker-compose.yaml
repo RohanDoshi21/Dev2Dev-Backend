@@ -31,6 +31,19 @@ services:
       postgres:
         condition: service_healthy
 
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - logs:/react-app/logs
+      - ./client:/react-app
+      - /react-app/node_modules
+    env_file:
+      - ./client/.env.dev
+    depends_on:
+      - server
+
 volumes:
   data:
   logs:
