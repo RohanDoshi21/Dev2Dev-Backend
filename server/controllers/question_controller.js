@@ -7,7 +7,11 @@ exports.retrieveQuestions = async (req, res) => {
     let page = parseInt(req.query.page) || 1;
     let offset = (page - 1) * questionsPerPage;
 
-	let query = "select * from Question LIMIT $1 OFFSET $2";
+    // Also send the owner's name along with the question
+    let query =
+		`select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id LIMIT $1 OFFSET $2`;
+
+	// let query = "select * from Question LIMIT $1 OFFSET $2";
 	try {
 		const data = await client.query(query, [questionsPerPage, offset]);
 		return res.json({ data: { questions: data.rows } });
@@ -45,12 +49,13 @@ exports.createQuestion = async (req, res) => {
 
 exports.updateQuestion = async (req, res) => {
 	let query =
-		"update Question set title = $1, description = $2 where id = $3 and owner = $4 returning *";
+		"update Question set title = $1, description = $2, status = $5 where id = $3 and owner = $4 returning *";
 	let values = [
 		req.body.title,
 		req.body.description,
 		parseInt(req.params.id),
 		req.user.id,
+        req.body.status,
 	];
 
 	try {
