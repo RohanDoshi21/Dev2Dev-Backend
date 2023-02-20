@@ -7,6 +7,7 @@ let indexRouter = require("./routes/index");
 let authRouter = require("./routes/auth");
 let questionRouter = require("./routes/question");
 let answerRouter = require("./routes/answer");
+let tagRouter = require("./routes/tag");
 
 let app = express();
 
@@ -20,5 +21,6 @@ app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/questions", questionRouter);
 app.use("/answers", answerRouter);
+app.use("/tags", tagRouter);
 
 module.exports = app;
