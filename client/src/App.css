@@ -36,3 +36,60 @@
     transform: rotate(360deg);
   }
 }
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 110vh;
+  color: #ff0000;
+  /* colo */
+  background-color: #282c34;
+}
+
+.signup-form {
+  width: 350px;
+  padding: 20px;
+  background-color: #0f0e0e;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(128, 39, 39, 0.3);
+}
+
+.signup-form h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.signup-form label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.signup-form input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.signup-form button[type="submit"] {
+  background-color: #892020;
+  color: #fff;
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form button[type="submit"]:hover {
+  background-color: #ff0000;
+}

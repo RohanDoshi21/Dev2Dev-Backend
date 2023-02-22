@@ -70,6 +70,9 @@ function Header() {
 					Username
 				</span>
 			</div>
+			<div className="drop-down-menu">
+				
+			</div>
 		</header>
 	);
 }
