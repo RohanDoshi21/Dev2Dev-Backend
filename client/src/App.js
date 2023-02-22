@@ -3,18 +3,22 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Header from "./components/Header";
 import TopQuestions from "./components/TopQuestions";
-import AuthPage from "./AuthPage";
+import { useState } from "react";
+import { authCheck } from "./AuthChecker";
+import SignupForm from "./components/SignupForm";
+import LoginForm from "./components/LoginForm";
 
 function App() {
+  const [isLogin, setType] = useState(authCheck() !== undefined);
   return (
     <Router>
       <div className="App">
         <Switch>
           <Route exact path="/auth/signup">
-            <AuthPage />
+            <SignupForm />
           </Route>
           <Route exact path="/auth/login">
-            <AuthPage />
+            <LoginForm />
           </Route>
           <Route exact path="/">
             <Header />

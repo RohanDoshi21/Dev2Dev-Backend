@@ -1,20 +1,26 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { loginUrl } from "../constants/urls";
+import { signupUrl } from "../constants/urls";
 
 import Cookies from "universal-cookie";
-import jwt from "jwt-decode";
 
-const LoginForm = () => {
+const SignupForm = () => {
+  const [firstName, setFname] = useState("");
+  const [lastName, setLname] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [dpUrl, setDpUrl] = useState("-");
+  const [reputation, setReputation] = useState("User");
   const history = useHistory();
-  const cookies = new Cookies();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
+      first_name: firstName,
+      last_name: lastName,
       email: email,
+      phone_number: phoneNumber,
       password: password,
     };
     const options = {
@@ -22,26 +28,45 @@ const LoginForm = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     };
-    console.log(loginUrl);
+    console.log(signupUrl);
+    let tmp = false;
     try {
-      const response = await fetch(loginUrl, options);
+      const cookies = new Cookies();
+      const response = await fetch(signupUrl, options);
+      if (response.status == 409) tmp = true;
       const data = await response.json();
       console.log(data);
       const token = data["data"]["token"];
-      console.log(token);
       cookies.set("jwt_authorization", token);
     } catch (error) {
       console.log(error);
     } finally {
-      history.push("/");
+      if (tmp) history.push("/auth/login");
+      else history.push("/");
     }
   };
 
   return (
     <div className="auth-container">
       <div className="signup-form">
-        <h1>Auth Page</h1>
+        <h1>Sign Up</h1>
         <form onSubmit={handleSubmit} className="auth-form">
+          <label>First Name</label>
+          <input
+            type="text"
+            className="auth-input"
+            value={firstName}
+            required
+            onChange={(e) => setFname(e.target.value)}
+          />
+          <label>Last Name</label>
+          <input
+            type="text"
+            className="auth-input"
+            value={lastName}
+            required
+            onChange={(e) => setLname(e.target.value)}
+          />
           <label>Email</label>
           <input
             type="email"
@@ -49,6 +74,14 @@ const LoginForm = () => {
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
+          />
+          <label>Phone Number</label>
+          <input
+            type="tel"
+            className="auth-input"
+            value={phoneNumber}
+            required
+            onChange={(e) => setPhoneNumber(e.target.value)}
           />
           <label>Password</label>
           <input
@@ -59,14 +92,9 @@ const LoginForm = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button type="submit">Submit</button>
-          <div>
-            <h2>
-              <a href="/auth/signup">Don't have an account? Sign up</a>
-            </h2>
-          </div>
         </form>
       </div>
     </div>
   );
 };
-export default LoginForm;
+export default SignupForm;
