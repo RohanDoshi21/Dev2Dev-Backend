@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { signupUrl } from "../constants/urls";
 
+<<<<<<< HEAD
 import Cookies from "universal-cookie";
+=======
+// import Cookies from "universal-cookie";
+>>>>>>> 05b5240 (Token caching and login/signup pages.)
 
 const SignupForm = () => {
   const [firstName, setFname] = useState("");
@@ -31,18 +35,18 @@ const SignupForm = () => {
     console.log(signupUrl);
     let tmp = false;
     try {
-      const cookies = new Cookies();
+      // const cookies = new Cookies();
       const response = await fetch(signupUrl, options);
       if (response.status == 409) tmp = true;
       const data = await response.json();
       console.log(data);
-      const token = data["data"]["token"];
-      cookies.set("jwt_authorization", token);
+      // const token = data["data"]["token"];
+      // cookies.set("jwt_authorization", token);
     } catch (error) {
       console.log(error);
     } finally {
-      if (tmp) history.push("/auth/login");
-      else history.push("/");
+      // history.push(-1);
+      history.push("/auth/login");
     }
   };
 

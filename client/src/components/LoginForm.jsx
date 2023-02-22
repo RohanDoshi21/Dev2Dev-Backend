@@ -22,14 +22,14 @@ const LoginForm = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     };
-    console.log(loginUrl);
+    // console.log(loginUrl);
     try {
       const response = await fetch(loginUrl, options);
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       const token = data["data"]["token"];
-      console.log(token);
-      cookies.set("jwt_authorization", token);
+      console.log("Auth Token: ", token);
+      await cookies.set("jwt_authorization", token);
     } catch (error) {
       console.log(error);
     } finally {

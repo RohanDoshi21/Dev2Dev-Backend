@@ -1,13 +1,13 @@
 import Cookies from "universal-cookie";
 
-function authCheck() {
+const authCheck = async () => {
   const cookies = new Cookies();
-  const status = cookies.get("jwt_authorization");
-  console.log(status);
+  const status = await cookies.get("jwt_authorization");
+  console.log("Status: ", status);
   return status !== undefined;
-}
+};
 function logOut() {
   const cookies = new Cookies();
   cookies.remove("jwt_authorization");
 }
-export {authCheck, logOut};
+export { authCheck, logOut };
