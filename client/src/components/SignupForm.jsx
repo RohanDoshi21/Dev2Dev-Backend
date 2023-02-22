@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { signupUrl } from "../constants/urls";
 
-<<<<<<< HEAD
-import Cookies from "universal-cookie";
-=======
 // import Cookies from "universal-cookie";
->>>>>>> 05b5240 (Token caching and login/signup pages.)
 
 const SignupForm = () => {
   const [firstName, setFname] = useState("");

@@ -113,14 +113,7 @@ const Header = () => {
           />
         )}
         {authCheck() && (
-<<<<<<< HEAD
-          <span className="text-gray-300 text-sm font-medium">Username</span>
-=======
-          <span className="text-gray-300 text-sm font-medium">
-            {error && "User"}
-            {/* {!error && data["username"]} */}
-          </span>
->>>>>>> 05b5240 (Token caching and login/signup pages.)
+          <span className="text-gray-300 text-sm font-medium">Username </span>
         )}
       </div>
     </header>
