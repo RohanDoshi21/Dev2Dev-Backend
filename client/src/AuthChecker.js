@@ -14,9 +14,8 @@ function logOut() {
 const config = {
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + cookies.get("jwt_authorization")
+        'Authorization': 'Bearer ' +  cookies.get("jwt_authorization")
     }
 }
-
 
 export {authCheck, logOut, config};
