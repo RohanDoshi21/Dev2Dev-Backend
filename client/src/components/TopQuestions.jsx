@@ -40,7 +40,6 @@ const TopQuestions = () => {
 		}
 	}
 
-
 	async function postQuestionBackend() {
         const cookies = new Cookies();
 
