@@ -27,8 +27,10 @@ function App() {
 					</Route>
 					<Route
 						path="/question/:id"
-						component={DisplayQuestionAndAnswers}
-					/>
+					>
+                        <Header />
+                        <DisplayQuestionAndAnswers />
+                    </Route>
 				</Switch>
 			</div>
 		</Router>
