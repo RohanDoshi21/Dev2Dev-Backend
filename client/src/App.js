@@ -7,29 +7,36 @@ import { useState } from "react";
 import { authCheck } from "./AuthChecker";
 import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
+import DisplayQuestionAndAnswers from "./components/DisplayQuestionAndAnswers";
 
 function App() {
   const [isLogin, setType] = useState(authCheck() !== undefined);
   return (
-    <Router>
-      <div className="App">
-        <Switch>
-          <Route exact path="/auth/signup">
-            <SignupForm />
-          </Route>
-          <Route exact path="/auth/login">
-            <LoginForm />
-          </Route>
-          <Route exact path="/">
-            <Header />
-            <TopQuestions />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-    // <>
-    //   <AuthPage />
-    // </>
+		<Router>
+			<div className="App">
+				<Switch>
+					<Route exact path="/auth/signup">
+						<SignupForm />
+					</Route>
+					<Route exact path="/auth/login">
+						<LoginForm />
+					</Route>
+					<Route exact path="/">
+						<Header />
+						<TopQuestions />
+					</Route>
+					<Route
+						path="/question/:id"
+					>
+                        <Header />
+                        <DisplayQuestionAndAnswers />
+                    </Route>
+				</Switch>
+			</div>
+		</Router>
+		// <>
+		//   <AuthPage />
+		// </>
   );
 }
 

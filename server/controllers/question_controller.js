@@ -22,7 +22,20 @@ exports.retrieveQuestions = async (req, res) => {
 };
 
 exports.retrieveQuestionById = async (req, res) => {
-	res.send("retrieveQuestionById");
+    // Add owener's name and email to the question
+    let query =
+        `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id where q.id = $1`;
+	// let query = "select * from Question where id = $1";
+    try {
+        const data = await client.query(query, [parseInt(req.params.id)]);
+        if (data.rows.length === 0) {
+            return res.status(404).json({ error: "Question not found." });
+        }
+        return res.json({ data: { question: { ...data.rows[0] } } });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error." });
+    }
 };
 
 exports.createQuestion = async (req, res) => {

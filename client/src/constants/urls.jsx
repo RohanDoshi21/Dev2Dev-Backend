@@ -3,3 +3,4 @@ export const getQuestionsUrl = baseUrl + "/questions";
 export const signupUrl = baseUrl + "/auth/signup";
 export const loginUrl = baseUrl + "/auth/login";
 export const profileUrl = baseUrl + "/auth/profile";
+export const answerUrl = baseUrl + "/answers";

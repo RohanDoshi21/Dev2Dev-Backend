@@ -1,7 +1,10 @@
 const client = require("../db/connect");
 
 exports.retrieveAnswerForQuestion = async (req, res) => {
-	let query = "select * from Answer where question_id = $1";
+    // Add owener's name and email to the answer
+    let query =
+        `select a.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Answer a join Users u on a.owner = u.id where a.question_id = $1`;
+	// let query = "select * from Answer where question_id = $1";
 	let values = [parseInt(req.params.id)];
 
 	try {
