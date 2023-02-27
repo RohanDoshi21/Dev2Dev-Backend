@@ -2,7 +2,7 @@ FROM node:lts-bullseye-slim
 
 WORKDIR /react-app
 
-COPY package.json .
+COPY package.json ./package.json
 
 RUN npm install
 
