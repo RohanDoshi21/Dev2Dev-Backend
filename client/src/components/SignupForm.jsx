@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { signupUrl } from "../constants/urls";
 
-import Cookies from "universal-cookie";
-
 const SignupForm = () => {
   const [firstName, setFname] = useState("");
   const [lastName, setLname] = useState("");
@@ -29,20 +27,14 @@ const SignupForm = () => {
       body: JSON.stringify(data),
     };
     console.log(signupUrl);
-    let tmp = false;
     try {
-      const cookies = new Cookies();
       const response = await fetch(signupUrl, options);
-      if (response.status == 409) tmp = true;
       const data = await response.json();
       console.log(data);
-      const token = data["data"]["token"];
-      cookies.set("jwt_authorization", token);
     } catch (error) {
       console.log(error);
     } finally {
-      if (tmp) history.push("/auth/login");
-      else history.push("/");
+      history.push("/auth/login");
     }
   };
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Logo from "../assets/logo_bg.png";
-import { useHistory } from "react-router-dom";
 import Cookies from "universal-cookie";
+import { useHistory } from "react-router-dom";
 
 import { authCheck, logOut } from "../AuthChecker";
 import { profileUrl } from "../constants/urls";
@@ -9,32 +9,50 @@ import { profileUrl } from "../constants/urls";
 // const cookies = new Cookies();
 
 const Header = () => {
+  // const isAuthenticated = authCheck();
+  let [isAuthenticated, setAuth] = useState(authCheck());
+  // console.log("Acc status ", isAuthenticated);
+
+  const handleLogout = async () => {
+    try {
+      // await logOut();
+      const data = await logOut();
+      console.log(data);
+      // if (data?.error) {
+      //   console.log(data.error);
+      // } else
+      setAuth(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   // const [profile, setProfile] = useState("");
   // const token = cookies.get("jwt_authorization");
   // if (token == undefined) return;
 
   // const fetchUser = async () => {
-  // //   const token = cookies.get("jwt_authorization");
+  //   //   const token = cookies.get("jwt_authorization");
   //   const options = {
-  // 	method: "GET",
-  // 	headers: {
-  // 	  "Content-Type": "application/json",
-  // 	  Authorization: "Bearer " + token,
-  // 	},
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: "Bearer " + token,
+  //     },
   //   };
   //   try {
-  // 	const response = await fetch(profileUrl, options);
-  // 	const data = await response.json();
-  // 	setProfile(data);
-  // 	console.log(data);
+  //     const response = await fetch(profileUrl, options);
+  //     const data = await response.json();
+  //     setProfile(data);
+  //     console.log(data);
   //   } catch (error) {
-  // 	console.log(error);
+  //     console.log(error);
   //   }
   // };
 
-  //   useEffect(() => {
-  //     fetchUser().then((data) => setProfile(data));
-  //   }, []);
+  // useEffect(() => {
+  //   fetchUser().then((data) => setProfile(data));
+  // }, []);
 
   return (
     <header className="flex justify-between items-center py-2 px-4 bg-gray-900 h-16 text-gray-100">
@@ -87,15 +105,19 @@ const Header = () => {
             </a>
           </li>
           <li>
-            {!authCheck() && (
+            {!isAuthenticated && (
               <a className="hover:text-blue-500" href="/auth/login">
                 Login
               </a>
             )}
           </li>
           <li>
-            {authCheck() && (
-              <a className="hover:text-blue-500" href="/" onClick={logOut}>
+            {isAuthenticated && (
+              <a
+                className="hover:text-blue-500"
+                href="/"
+                onClick={handleLogout}
+              >
                 Logout
               </a>
             )}
@@ -105,15 +127,15 @@ const Header = () => {
 
       {/* User profile information */}
       <div className="user-profile flex items-center mx-2">
-        {authCheck() && (
+        {isAuthenticated && (
           <img
             className="rounded-full h-8 w-8 mr-2"
             src="https://via.placeholder.com/50x50"
             alt="User profile"
           />
         )}
-        {authCheck() && (
-          <span className="text-gray-300 text-sm font-medium">Username</span>
+        {isAuthenticated && (
+          <span className="text-gray-300 text-sm font-medium">Username </span>
         )}
       </div>
     </header>

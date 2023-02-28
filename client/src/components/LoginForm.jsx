@@ -28,8 +28,10 @@ const LoginForm = () => {
       const data = await response.json();
       console.log(data);
       const token = data["data"]["token"];
-      console.log(token);
-      cookies.set("jwt_authorization", token);
+      // console.log(token);
+      // cookies.set("jwt_authorization", token);
+      localStorage.setItem("jwt_authorization", token);
+      console.log("stored ", localStorage.getItem("jwt_authorization"));
     } catch (error) {
       console.log(error);
     } finally {
