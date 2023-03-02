@@ -88,7 +88,7 @@ const Header = () => {
 
       {/* Navigation links */}
       <nav className="flex-1">
-        <ul className="flex justify-end">
+        <ul className="flex justify-end ">
           <li className="mr-4">
             <a className="hover:text-blue-500" href="#">
               Questions
@@ -99,19 +99,19 @@ const Header = () => {
               Tags
             </a>
           </li>
-          <li>
+          <li className="mr-4">
             <a className="hover:text-blue-500" href="#">
               Users
             </a>
           </li>
-          <li>
+          <li className="mr-4">
             {!isAuthenticated && (
               <a className="hover:text-blue-500" href="/auth/login">
                 Login
               </a>
             )}
           </li>
-          <li>
+          <li className="mr-4">
             {isAuthenticated && (
               <a
                 className="hover:text-blue-500"

@@ -18,18 +18,18 @@ const logOut = async () => {
     const token = await localStorage.getItem("jwt_authorization");
     console.log("My token is ", token);
     localStorage.removeItem("jwt_authorization");
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const res = await fetch(logoutUrl, options);
-    const data = await res.json();
-    res = data;
-    console.log(data);
-    return data;
+    // const options = {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // };
+    // const res = await fetch(logoutUrl, options);
+    // const data = await res.json();
+    // res = data;
+    // console.log(data);
+    return { message: "Successfully logged out" };
   } catch (error) {
     console.log("ERROR: ", error);
     return { error: "Something went wrong" };
