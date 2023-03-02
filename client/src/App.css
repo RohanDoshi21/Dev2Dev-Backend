@@ -117,9 +117,8 @@ input[type="password"] {
 }
 
 .Toastify__toast--error {
-  /* border: 1px solid #eb5757; */
   border-radius: 50px !important;
-  background: #ff0000 !important;
+  background: #fb9b9b !important;
   color: black;
   font-size: larger;
   font-weight: bolder;
