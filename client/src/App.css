@@ -108,3 +108,19 @@ input[type="password"] {
 .signup-form button[type="submit"]:hover {
   background-color: #ff0000;
 }
+
+.Toastify__toast--success {
+  /* border: 1px solid #3a9ea5 !important; */
+  border-radius: 50px !important;
+  background: #6bff7a !important;
+  font-weight: bolder;
+}
+
+.Toastify__toast--error {
+  /* border: 1px solid #eb5757; */
+  border-radius: 50px !important;
+  background: #ff0000 !important;
+  color: black;
+  font-size: larger;
+  font-weight: bolder;
+}

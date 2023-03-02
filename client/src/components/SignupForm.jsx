@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { signupUrl } from "../constants/urls";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const SignupForm = () => {
   const [firstName, setFname] = useState("");
   const [lastName, setLname] = useState("");
@@ -31,8 +34,16 @@ const SignupForm = () => {
       const response = await fetch(signupUrl, options);
       const data = await response.json();
       console.log(data);
+      toast.success("Successfully registered!", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
     } catch (error) {
       console.log(error);
+      toast.error("Failed to register", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
     } finally {
       history.push("/auth/login");
     }

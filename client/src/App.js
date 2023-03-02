@@ -9,13 +9,19 @@ import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
 import DisplayQuestionAndAnswers from "./components/DisplayQuestionAndAnswers";
 
+import Sample from "./components/Notifications";
+import LoginSuccess from "./components/Notifications";
+
+import { ToastContainer, toast } from "react-toastify";
+
 function App() {
   //   const [isLogin, setType] = useState(authCheck());
   // localStorage.removeItem("jwt_authorization");
-//   logOut();
+  //   logOut();
   return (
     <Router>
       <div className="App">
+        <ToastContainer />
         <Switch>
           <Route exact path="/auth/signup">
             <SignupForm />
@@ -27,12 +33,10 @@ function App() {
             <Header />
             <TopQuestions />
           </Route>
-          {/* <Route
-						path="/question/:id"
-					>
-                        <Header />
-                        <DisplayQuestionAndAnswers />
-                    </Route> */}
+          <Route path="/question/:id">
+            <Header />
+            <DisplayQuestionAndAnswers />
+          </Route>
         </Switch>
       </div>
     </Router>
