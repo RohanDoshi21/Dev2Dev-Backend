@@ -6,139 +6,126 @@ import { useHistory } from "react-router-dom";
 import { authCheck, logOut } from "../AuthChecker";
 import { profileUrl } from "../constants/urls";
 
-// const cookies = new Cookies();
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
   // const isAuthenticated = authCheck();
   let [isAuthenticated, setAuth] = useState(authCheck());
+  const userName = localStorage.getItem("username");
   // console.log("Acc status ", isAuthenticated);
 
   const handleLogout = async () => {
     try {
-      // await logOut();
-      const data = await logOut();
+      const data = logOut();
       console.log(data);
       // if (data?.error) {
       //   console.log(data.error);
       // } else
       setAuth(false);
+      toast.success("Logged out!", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
     } catch (e) {
+      toast.error("Failed to logout", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
       console.log(e);
     }
   };
 
-  // const [profile, setProfile] = useState("");
-  // const token = cookies.get("jwt_authorization");
-  // if (token == undefined) return;
-
-  // const fetchUser = async () => {
-  //   //   const token = cookies.get("jwt_authorization");
-  //   const options = {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: "Bearer " + token,
-  //     },
-  //   };
-  //   try {
-  //     const response = await fetch(profileUrl, options);
-  //     const data = await response.json();
-  //     setProfile(data);
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUser().then((data) => setProfile(data));
-  // }, []);
-
   return (
-    <header className="flex justify-between items-center py-2 px-4 bg-gray-900 h-16 text-gray-100">
-      {/* Logo */}
-      <div className="logo">
-        <img src={Logo} alt="Stack Overflow logo" className="h-12 w-40 p-2" />
-      </div>
+    <div>
+      <ToastContainer />
+      <header className="flex justify-between items-center py-2 px-4 bg-gray-900 h-16 text-gray-100">
+        {/* Logo */}
+        <div className="logo">
+          <img src={Logo} alt="Stack Overflow logo" className="h-12 w-40 p-2" />
+        </div>
 
-      {/* Search bar */}
-      <div className="flex-1 mx-4">
-        <div className="relative">
-          <input
-            className="block w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 placeholder-gray-500 text-gray-100 focus:outline-none focus:border-blue-500 focus:shadow-outline-blue"
-            type="text"
-            placeholder="Search..."
-          />
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <svg
-              className="h-5 w-5 text-gray-500"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M22 22l-6-6" />
-              <circle cx="10" cy="10" r="8" />
-            </svg>
+        {/* Search bar */}
+        <div className="flex-1 mx-4">
+          <div className="relative">
+            <input
+              className="block w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 placeholder-gray-500 text-gray-100 focus:outline-none focus:border-blue-500 focus:shadow-outline-blue"
+              type="text"
+              placeholder="Search..."
+            />
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <svg
+                className="h-5 w-5 text-gray-500"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M22 22l-6-6" />
+                <circle cx="10" cy="10" r="8" />
+              </svg>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Navigation links */}
-      <nav className="flex-1">
-        <ul className="flex justify-end ">
-          <li className="mr-4">
-            <a className="hover:text-blue-500" href="#">
-              Questions
-            </a>
-          </li>
-          <li className="mr-4">
-            <a className="hover:text-blue-500" href="#">
-              Tags
-            </a>
-          </li>
-          <li className="mr-4">
-            <a className="hover:text-blue-500" href="#">
-              Users
-            </a>
-          </li>
-          <li className="mr-4">
-            {!isAuthenticated && (
-              <a className="hover:text-blue-500" href="/auth/login">
-                Login
+        {/* Navigation links */}
+        <nav className="flex-1">
+          <ul className="flex justify-end ">
+            <li className="mr-4">
+              <a className="hover:text-blue-500" href="#">
+                Questions
               </a>
-            )}
-          </li>
-          <li className="mr-4">
-            {isAuthenticated && (
-              <a
-                className="hover:text-blue-500"
-                href="/"
-                onClick={handleLogout}
-              >
-                Logout
+            </li>
+            <li className="mr-4">
+              <a className="hover:text-blue-500" href="#">
+                Tags
               </a>
-            )}
-          </li>
-        </ul>
-      </nav>
+            </li>
+            <li className="mr-4">
+              <a className="hover:text-blue-500" href="#">
+                Users
+              </a>
+            </li>
+            <li className="mr-4">
+              {!isAuthenticated && (
+                <a className="hover:text-blue-500" href="/auth/login">
+                  Login
+                </a>
+              )}
+            </li>
+            <li className="mr-4">
+              {isAuthenticated && (
+                <a
+                  className="hover:text-blue-500"
+                  href="/"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </a>
+              )}
+            </li>
+          </ul>
+        </nav>
 
-      {/* User profile information */}
-      <div className="user-profile flex items-center mx-2">
-        {isAuthenticated && (
-          <img
-            className="rounded-full h-8 w-8 mr-2"
-            src="https://via.placeholder.com/50x50"
-            alt="User profile"
-          />
-        )}
-        {isAuthenticated && (
-          <span className="text-gray-300 text-sm font-medium">Username </span>
-        )}
-      </div>
-    </header>
+        {/* User profile information */}
+        <div className="user-profile flex items-center mx-2">
+          {isAuthenticated && (
+            <img
+              className="rounded-full h-8 w-8 mr-2"
+              src="https://via.placeholder.com/50x50"
+              alt="User profile"
+            />
+          )}
+          {isAuthenticated && (
+            <span className="text-gray-300 text-sm font-medium">
+              {userName}{" "}
+            </span>
+          )}
+        </div>
+      </header>
+    </div>
   );
 };
 
