@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { signupUrl } from "../constants/urls";
 
-import Cookies from "universal-cookie";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignupForm = () => {
   const [firstName, setFname] = useState("");
@@ -29,20 +30,22 @@ const SignupForm = () => {
       body: JSON.stringify(data),
     };
     console.log(signupUrl);
-    let tmp = false;
     try {
-      const cookies = new Cookies();
       const response = await fetch(signupUrl, options);
-      if (response.status == 409) tmp = true;
       const data = await response.json();
       console.log(data);
-      const token = data["data"]["token"];
-      cookies.set("jwt_authorization", token);
+      toast.success("Successfully registered!", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
     } catch (error) {
       console.log(error);
+      toast.error("Failed to register", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
     } finally {
-      if (tmp) history.push("/auth/login");
-      else history.push("/");
+      history.push("/auth/login");
     }
   };
 
@@ -92,6 +95,11 @@ const SignupForm = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button type="submit">Submit</button>
+          <div>
+            <h2>
+              <a href="/auth/login">Already have an account? Log in</a>
+            </h2>
+          </div>
         </form>
       </div>
     </div>

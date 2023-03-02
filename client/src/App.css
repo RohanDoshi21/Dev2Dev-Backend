@@ -42,15 +42,15 @@
   justify-content: center;
   align-items: center;
   height: 110vh;
-  color: #ff0000;
+  color: #ffffff;
   /* colo */
-  background-color: #282c34;
+  background-color: #ddd5d5;
 }
 
 .signup-form {
   width: 350px;
   padding: 20px;
-  background-color: #0f0e0e;
+  background-color: #282c34;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(128, 39, 39, 0.3);
 }
@@ -66,6 +66,13 @@
   font-size: 12px;
   margin-bottom: 20px;
   margin-top: 20px;
+}
+.signup-form h2:hover {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  color: #ff0000;
 }
 
 .signup-form label {
@@ -84,6 +91,7 @@ input[type="password"] {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 20px;
+  color: #343028;
 }
 
 .signup-form button[type="submit"] {
@@ -99,4 +107,19 @@ input[type="password"] {
 
 .signup-form button[type="submit"]:hover {
   background-color: #ff0000;
+}
+
+.Toastify__toast--success {
+  /* border: 1px solid #3a9ea5 !important; */
+  border-radius: 50px !important;
+  background: #6bff7a !important;
+  font-weight: bolder;
+}
+
+.Toastify__toast--error {
+  border-radius: 50px !important;
+  background: #fb9b9b !important;
+  color: black;
+  font-size: larger;
+  font-weight: bolder;
 }
