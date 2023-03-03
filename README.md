@@ -1,3 +1,5 @@
+![DevToDev HLD](https://user-images.githubusercontent.com/63660267/222787556-0179b119-937c-429b-a51d-b37e84735f1e.png)
+
 > Steps to build using docker-compose
 
 ### 1. Starting all containers (including building)
