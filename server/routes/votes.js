@@ -8,13 +8,15 @@ let router = express.Router();
 router.post("/question/:id", isAuthenticated, CreateVoteQuestions);
 
 // Update the vote for a question
-router.put("/question/:id", isAuthenticated, UpdateVoteQuestions);
+// TODO: Think about the logic to update the vote
+// router.put("/question/:id", isAuthenticated, UpdateVoteQuestions);
 
 // Vote a answer
 router.post("/answer/:id", isAuthenticated, CreateVoteAnswers);
 
 // Update the vote for a answer
-router.put("/answer/:id", isAuthenticated, UpdateVoteAnswers);
+// TODO: Think about the logic to update the vote
+// router.put("/answer/:id", isAuthenticated, UpdateVoteAnswers);
 
 
 module.exports = router;
