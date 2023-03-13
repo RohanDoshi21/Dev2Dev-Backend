@@ -4,60 +4,8 @@ import { authCheck } from "../AuthChecker";
 import { getQuestionsUrl, answerUrl } from "../constants/urls";
 import formattedDate from "../utils/dateFormattor";
 import Axios from "axios";
-import Cookies from "universal-cookie";
-
-// const DisplayQuestionAndAnswers = ({ question }) => {
-//     return (
-// <div className="flex flex-col mx-auto w-2/3">
-//     <div className="justify-start content-start items-start">
-//         <div className="flex flex-col">
-//             <div className="flex flex-row justify-between">
-//                 <div className="flex flex-col">
-//                     <div className="flex flex-row">
-//                         <div className="text-2xl font-bold">
-//                             {question.title}
-//                         </div>
-//                     </div>
-//                     <div className="flex flex-row">
-//                         <div className="text-sm text-gray-500">
-//                             {question.description}
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="flex flex-col">
-//                     <div className="flex flex-row">
-//                         <div className="text-sm text-gray-500">
-//                             {question.answers.length} Answers
-//                         </div>
-//                     </div>
-//                     <div className="flex flex-row">
-//                         <div className="text-sm text-gray-500">
-//                             {question.views} Views
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//             <div className="flex flex-row justify-between">
-//                 <div className="flex flex-row">
-//                     <div className="text-sm text-gray-500">
-//                         Asked {question.createdAt}
-//                     </div>
-//                 </div>
-//                 <div className="flex flex-row">
-//                     <div className="text-sm text-gray-500">
-//                         {question.tags.map((tag) => (
-//                             <div className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
-//                                 {tag}
-//                             </div>
-//                         ))}
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-// </div>
-//     );
-// }
+import arrrowUp from "../assets/up-arrow.png";
+import arrrowDown from "../assets/down-arrow.png";
 
 const fetchQuestionById = async (id) => {
   let response = await fetch(getQuestionsUrl + "/" + id);
@@ -79,6 +27,15 @@ const DisplayQuestionAndAnswers = (props) => {
   const [question, setQuestion] = useState({});
   const [answers, setAnswers] = useState([]);
   const [addAnswerVariable, setAddAnswerVariable] = useState("");
+
+  function formatedDate(createdAt) {
+		const date = new Date(createdAt);
+		const formattedDate = `${date.getDate()} ${date.toLocaleString(
+			"default",
+			{ month: "short" }
+		)} ${date.getFullYear()}`;
+		return formattedDate;
+	}
 
   useEffect(() => {
     fetchAnswersByQuestionId(id).then((data) => setAnswers(data));
@@ -111,117 +68,129 @@ const DisplayQuestionAndAnswers = (props) => {
       config
     ).then((response) => {
       console.log(response);
+      setAddAnswerVariable("");
       fetchAnswersByQuestionId(id).then((data) => setAnswers(data));
       alert("Answer Added Succesfully");
     });
   };
 
   return (
-    <div className="px-12 py-5">
-      <div className="border border-gray-200 shadow-lg rounded-lg p-6 mb-1 px-12">
-        <div className="flex items-center mb-2">
-          <h2 className="text-lg font-medium text-gray-900 mr-2">
-            {question.title}
-          </h2>
-          <span
-            className={`rounded-full px-2 py-1 text-xs font-medium mr-2 bg-green-100 text-green-800`}
+    <div className="mx-36 py-5 bg-opacity-50 bg-white">
+      <div className="border-gray-200 shadow-md border flex flex-row gap-8 rounded-lg p-4 mb-3 relative w-full">
+        <div className="flex flex-col items-end  gap-4 justify-center  mr-2  w-[1rem]">
+          <button
+            className="text-gray-600 hover:text-gray-800 flex  flex-row focus:outline-none focus:text-gray-800"
+            aria-label="Upvote"
           >
-            {question.status}
-          </span>
+            <img
+              src={arrrowUp}
+              className="h-5 w-5 mx-2"
+              alt="up arrow"
+            ></img>
+
+            <span className="text-xs font-medium">
+              {question.upvotes}
+            </span>
+          </button>
+          <button
+            className="text-gray-600 hover:text-gray-800 flex flex-row  focus:outline-none focus:text-gray-800"
+            aria-label="Downvote"
+          >
+            <img
+              src={arrrowDown}
+              className="h-5 w-5 mx-2"
+              alt="up arrow"
+            ></img>
+            <span className="text-xs font-medium">
+              {question.downvotes}
+            </span>
+          </button>
         </div>
-        <p className="text-gray-700 mb-2 flex">{question.description}</p>
-        <div className="flex items-center justify-between">
-          <p className="text-gray-600 text-xs">
-            {question.email} • Posted on {formattedDate(question.created_at)}
-          </p>
-          <div className="flex items-center">
-            <button
-              className="mr-2 text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
-              aria-label="Upvote"
-            >
-              <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 3.414l5.657 5.657-1.414 1.414L10 6.243 5.757 10.5 4.343 9.086 10 3.414zM10 16.586l-5.657-5.657 1.414-1.414L10 13.757l4.243-4.243 1.414 1.414L10 16.586z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-xs font-medium">{question.upvotes}</span>
-            </button>
-            <button
-              className="text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
-              aria-label="Downvote"
-            >
-              <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 16.586l-5.657-5.657 1.414-1.414L10 13.757l4.243-4.243 1.414 1.414L10 16.586z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-xs font-medium">{question.downvotes}</span>
-            </button>
+        <div className="flex flex-col gap-3 mb-2">
+          <div className="items-start justify-start text-start">
+            <div className="flex flex-row">
+              <h2 className="text-lg font-medium text-[#2C74B3] text-bold mr-2">
+                {question.title}
+                <span
+                  className={`${question.status === "OPEN"
+                    ? "bg-[#a6f1c6] text-[#15452a]"
+                    : "bg-[#fb919d] text-[#bc3646]"
+                    } pb-1  mx-2 rounded-full px-2 py-1 text-xs font-medium`}
+                >
+                  {question.status}
+                </span>
+              </h2>
+            </div>
+            <div className="text-gray-700 mb-2">
+              {question.description}
+            </div>
+          </div>
+          <div className="text-gray-600 text-end items-end justify-end text-xs absolute bottom-3 right-5">
+            {question.email} • Posted on{" "}
+            {formatedDate(question.created_at)}
           </div>
         </div>
       </div>
 
       <div className="flex flex-col mt-4">
         <div className="flex flex-row">
-          <div className="text-sm text-gray-500">{answers.length} Answers</div>
+          <div className="text-base font-medium mb-1 text-gray-500">{answers.length} Answers</div>
         </div>
       </div>
 
       {/* Map through Answers and display them Answers has description upvote downvote created_at and name email*/}
       {answers.map((answer) => (
-        <div className="border border-gray-200 shadow-lg rounded-lg p-6 mb-1 px-12">
-          <div className="flex items-center mb-2">
-            <h2 className="text-lg font-medium text-gray-900 mr-2">
+        <div className="border-gray-200 shadow-md border flex flex-row gap-8 rounded-lg p-4 mb-3 relative w-full">
+        <div className="flex flex-col items-end  gap-4 justify-center  mr-2  w-[1rem]">
+          <button
+            className="text-gray-600 hover:text-gray-800 flex  flex-row focus:outline-none focus:text-gray-800"
+            aria-label="Upvote"
+          >
+            <img
+              src={arrrowUp}
+              className="h-5 w-5 mx-2"
+              alt="up arrow"
+            ></img>
+
+            <span className="text-xs font-medium">
+              {answer.upvotes}
+            </span>
+          </button>
+          <button
+            className="text-gray-600 hover:text-gray-800 flex flex-row  focus:outline-none focus:text-gray-800"
+            aria-label="Downvote"
+          >
+            <img
+              src={arrrowDown}
+              className="h-5 w-5 mx-2"
+              alt="up arrow"
+            ></img>
+            <span className="text-xs font-medium">
+              {answer.downvotes}
+            </span>
+          </button>
+        </div>
+        <div className="flex flex-col gap-3 mb-2">
+          <div className="items-start justify-start text-start">
+            <div className="text-gray-700 mb-2">
               {answer.description}
-            </h2>
-          </div>
-          <div className="flex items-center justify-between">
-            <p className="text-gray-600 text-xs">
-              {answer.email} • Posted on {formattedDate(answer.created_at)}
-            </p>
-            <div className="flex items-center">
-              <button
-                className="mr-2 text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
-                aria-label="Upvote"
-              >
-                <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 3.414l5.657 5.657-1.414 1.414L10 6.243 5.757 10.5 4.343 9.086 10 3.414zM10 16.586l-5.657-5.657 1.414-1.414L10 13.757l4.243-4.243 1.414 1.414L10 16.586z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-xs font-medium">{answer.upvotes}</span>
-              </button>
-              <button
-                className="text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
-                aria-label="Downvote"
-              >
-                <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 16.586l-5.657-5.657 1.414-1.414L10 13.757l4.243-4.243 1.414 1.414L10 16.586z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-xs font-medium">{answer.downvotes}</span>
-              </button>
             </div>
           </div>
+          <div className="text-gray-600 text-end items-end justify-end text-xs absolute bottom-3 right-5">
+            {answer.email} • Posted on{" "}
+            {formatedDate(answer.created_at)}
+          </div>
         </div>
+      </div>
       ))}
 
       {/* Display the form to add an answer */}
-      <div className="border border-gray-200 shadow-lg rounded-lg p-6 mb-1 px-12">
+      <div className="border border-gray-200 shadow-lg rounded-lg px-8 mb-1 py-3">
         <div className="flex flex-col">
           <div className="flex flex-row">
-            <div className="text-sm text-gray-500">Add Answer</div>
+            <div className="text-base font-medium mb-1 text-gray-500">Add an Answer</div>
           </div>
-          <div className="flex flex-col my-4">
+          <div className="flex flex-col">
             <div className="text-sm text-gray-500">
               <textarea
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
@@ -235,11 +204,11 @@ const DisplayQuestionAndAnswers = (props) => {
             <div className="flex flex-row my-2">
               <div className="text-sm text-gray-500">
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="bg-[#144272] hover:bg-[#2C74B3] text-white  py-2 px-4 rounded-2xl w-32"
                   type="button"
                   onClick={addAnswer}
                 >
-                  Add Answer
+                  Submit
                 </button>
               </div>
             </div>

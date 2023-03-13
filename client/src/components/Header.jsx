@@ -39,7 +39,7 @@ const Header = () => {
   return (
     <div>
       <ToastContainer />
-      <header className="flex justify-between items-center py-2 px-4 bg-gray-900 h-16 text-gray-100">
+      <header className="flex justify-between items-center py-2 px-4 bg-[#0A2647] h-16 text-gray-100">
         {/* Logo */}
         <div className="logo">
           <img src={Logo} alt="Stack Overflow logo" className="h-12 w-40 p-2" />
@@ -69,6 +69,7 @@ const Header = () => {
             </div>
           </div>
         </div>
+
 
         {/* Navigation links */}
         <nav className="flex-1">
