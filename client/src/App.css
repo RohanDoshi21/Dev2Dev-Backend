@@ -110,17 +110,17 @@ input[type="password"] {
   background-color: #ff0000;
 }
 
-.Toastify__toast--success {
-  /* border: 1px solid #3a9ea5 !important; */
+/* .Toastify__toast--success {
   border-radius: 50px !important;
   background: #6bff7a !important;
   font-weight: bolder;
-}
+} */
 
-.Toastify__toast--error {
+/* .Toastify__toast--error {
   border-radius: 50px !important;
   background: #fb9b9b !important;
   color: black;
   font-size: larger;
   font-weight: bolder;
-}
+} */
+
