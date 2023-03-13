@@ -10,6 +10,7 @@ import LoginForm from "./components/LoginForm";
 import DisplayQuestionAndAnswers from "./components/DisplayQuestionAndAnswers";
 
 import { ToastContainer, toast } from "react-toastify";
+import SearchPage from "./components/SearchPage";
 
 function App() {
   //   const [isLogin, setType] = useState(authCheck());
@@ -29,6 +30,9 @@ function App() {
           <Route exact path="/">
             <Header />
             <TopQuestions />
+          </Route>
+          <Route exact path="/search/results/:query">
+            <SearchPage />
           </Route>
           <Route path="/question/:id">
             <Header />

@@ -12,7 +12,9 @@ import "react-toastify/dist/ReactToastify.css";
 const Header = () => {
   // const isAuthenticated = authCheck();
   let [isAuthenticated, setAuth] = useState(authCheck());
+  let [query, setQuery] = useState("");
   const userName = localStorage.getItem("username");
+  const history = useHistory();
   // console.log("Acc status ", isAuthenticated);
 
   const handleLogout = async () => {
@@ -36,6 +38,21 @@ const Header = () => {
     }
   };
 
+  const handleSearch = () => {
+    history.push(`/search/results/${query}`);
+  };
+
+  const handleChange = (event) => {
+    setQuery(event.target.value);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      console.log("Enter pressed");
+      handleSearch();
+    }
+  };
+
   return (
     <div>
       <ToastContainer />
@@ -52,6 +69,12 @@ const Header = () => {
               className="block w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 placeholder-gray-500 text-gray-100 focus:outline-none focus:border-blue-500 focus:shadow-outline-blue"
               type="text"
               placeholder="Search..."
+              value={query}
+              onChange={handleChange}
+              onClick={() => {
+                console.log(query);
+              }}
+              onKeyDown={handleKeyDown}
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
               <svg

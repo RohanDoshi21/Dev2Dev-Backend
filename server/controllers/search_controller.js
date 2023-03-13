@@ -1,14 +1,13 @@
 const client = require("../db/connect");
-const { Client } = require("@elastic/elasticsearch");
+const esClient = require("../db/elastic_connect");
 // const elasticsearch = require("@elastic/elasticsearch");
+// const { search } = require("@elastic/elasticsearch");
 // const { client: pgClient } = require("../db/connect");
 
 const phraseSearch = async (_index, _type, phrase) => {
   try {
-    console.log("els HOST: ", process.env.ELASTICSEARCH_HOST);
-    // const { rows } = await pgClient.query(`
     const { rows } = await client.query(`
-    SELECT id, description FROM Question
+    SELECT id, description, title FROM Question
   `);
 
     console.log("ROWS: ", rows);
@@ -16,22 +15,16 @@ const phraseSearch = async (_index, _type, phrase) => {
     console.log("index: ", _index);
     console.log("type: ", _type);
 
-    const esClient = new Client({
-      cloud: {
-        id: "Dev2Dev:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ5ODE1ZDg4OWI0OWI0YWFmOGY2MTVhOGI0OWVkMWMyMCQ5YzE3NmRiNDk4Mjg0MDhiYjA1ZWZmNjU3MWRlYTRhYQ==",
-      },
-      auth: {
-        username: "elastic",
-        password: "JsEXi8h70TDJFieqd7e9JNz6",
-      },
-      log: "error",
-    });
+    const index = "myindex";
 
     try {
+      // await esClient.indices.delete({
+      //   index: index,
+      // });
       await esClient.bulk({
         body: rows.flatMap((row) => [
-          { index: { _index: "myindex", _id: row.id } },
-          { name: row.name, description: row.description },
+          { index: { _index: index, _id: row.id } },
+          { name: row.name, description: row.description, title: row.title },
         ]),
       });
     } catch (error) {
@@ -41,12 +34,12 @@ const phraseSearch = async (_index, _type, phrase) => {
     hits = [];
 
     const searchResult = await esClient.search({
-      index: _index,
+      index: index,
       type: _type,
       body: {
         query: {
           multi_match: {
-            fields: ["description"],
+            fields: ["description", "title"],
             query: phrase,
             type: "phrase_prefix",
           },
@@ -54,6 +47,7 @@ const phraseSearch = async (_index, _type, phrase) => {
         highlight: {
           fields: {
             description: {},
+            title: {},
           },
         },
       },
@@ -78,6 +72,7 @@ const phraseSearch = async (_index, _type, phrase) => {
     return {
       // msg: "Passed",
       hitsCount: hits.length,
+      took: searchResult.took,
       hits,
     };
   } catch (error) {

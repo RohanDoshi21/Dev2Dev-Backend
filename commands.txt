@@ -1,0 +1,5 @@
+docker compose down -v
+docker rmi -f $(docker image ls)
+docker image prune
+docker system prune
+docker compose up

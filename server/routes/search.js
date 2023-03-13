@@ -6,7 +6,7 @@ const client = require("../db/connect");
 
 let router = express.Router();
 
-// router.get("/:index/:type", searchQuery);
+router.get("/:index/:type", searchQuery);
 router.get("/", searchQuery);
 
 module.exports = router;
