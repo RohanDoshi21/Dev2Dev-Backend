@@ -1,15 +1,14 @@
 const client = require("../db/connect");
 
 exports.retrieveQuestions = async (req, res) => {
-    // Pagination logic
-    // Page size is defaulted to 10
-    let questionsPerPage = 10;
-    let page = parseInt(req.query.page) || 1;
-    let offset = (page - 1) * questionsPerPage;
+	// Pagination logic
+	// Page size is defaulted to 10
+	let questionsPerPage = 10;
+	let page = parseInt(req.query.page) || 1;
+	let offset = (page - 1) * questionsPerPage;
 
-    // Also send the owner's name along with the question
-    let query =
-		`select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id LIMIT $1 OFFSET $2`;
+	// Also send the owner's name along with the question and sort by created_at
+	let query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id order by created_at DESC LIMIT $1 OFFSET $2`;
 
 	// let query = "select * from Question LIMIT $1 OFFSET $2";
 	try {
