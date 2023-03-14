@@ -33,11 +33,14 @@ const SignupForm = () => {
     try {
       const response = await fetch(signupUrl, options);
       const data = await response.json();
-      console.log(data);
-      toast.success("Successfully registered!", {
-        position: "top-center",
-        hideProgressBar: true,
-      });
+      if (data?.error) {
+      } else {
+        console.log(data);
+        toast.success("Successfully registered!", {
+          position: "top-center",
+          hideProgressBar: true,
+        });
+      }
     } catch (error) {
       console.log(error);
       toast.error("Failed to register", {

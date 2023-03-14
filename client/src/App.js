@@ -8,7 +8,8 @@ import { useState } from "react";
 import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
 import DisplayQuestionAndAnswers from "./components/DisplayQuestionAndAnswers";
-
+import bgimage from "../src/assets/background.jpg";
+import bgimage2 from "../src/assets/bgop2.jpeg";
 import { ToastContainer, toast } from "react-toastify";
 import SearchPage from "./components/SearchPage";
 
@@ -18,7 +19,16 @@ function App() {
   //   logOut();
   return (
     <Router>
-      <div className="App">
+      <div
+        className="App"
+        style={{
+          backgroundImage: `url(${bgimage2})`,
+          height: `100vh`,
+          backgroundRepeat: `no-repeat`,
+          width: `100wh`,
+          backgroundSize: `cover`,
+        }}
+      >
         <ToastContainer />
         <Switch>
           <Route exact path="/auth/signup">
@@ -41,9 +51,6 @@ function App() {
         </Switch>
       </div>
     </Router>
-    // <>
-    //   <AuthPage />
-    // </>
   );
 }
 

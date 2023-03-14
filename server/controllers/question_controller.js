@@ -2,8 +2,8 @@ const client = require("../db/connect");
 
 exports.retrieveQuestions = async (req, res) => {
     // Pagination logic
-    // Page size is defaulted to 10
-    let questionsPerPage = 10;
+    // Page size is defaulted to 20
+    let questionsPerPage = 20;
     let page = parseInt(req.query.page) || 1;
     let offset = (page - 1) * questionsPerPage;
 

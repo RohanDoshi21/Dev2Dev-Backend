@@ -13,8 +13,10 @@ const Header = () => {
   // const isAuthenticated = authCheck();
   let [isAuthenticated, setAuth] = useState(authCheck());
   let [query, setQuery] = useState("");
-  const userName = localStorage.getItem("username");
   const history = useHistory();
+  // console.log("Acc status ", isAuthenticated);
+  // const isAuthenticated = authCheck();
+  const userName = localStorage.getItem("username");
   // console.log("Acc status ", isAuthenticated);
 
   const handleLogout = async () => {
@@ -39,7 +41,8 @@ const Header = () => {
   };
 
   const handleSearch = () => {
-    history.push(`/search/results/${query}`);
+    const q = query.replace(" ", "+");
+    history.push(`/search/results/${q}`);
   };
 
   const handleChange = (event) => {
@@ -56,10 +59,16 @@ const Header = () => {
   return (
     <div>
       <ToastContainer />
-      <header className="flex justify-between items-center py-2 px-4 bg-gray-900 h-16 text-gray-100">
+      <header className="flex justify-between items-center py-2 px-4 bg-[#0A2647] h-16 text-gray-100">
         {/* Logo */}
         <div className="logo">
-          <img src={Logo} alt="Stack Overflow logo" className="h-12 w-40 p-2" />
+          <a href="/">
+            <img
+              src={Logo}
+              alt="Stack Overflow logo"
+              className="h-12 w-40 p-2"
+            />
+          </a>
         </div>
 
         {/* Search bar */}
@@ -97,7 +106,7 @@ const Header = () => {
         <nav className="flex-1">
           <ul className="flex justify-end ">
             <li className="mr-4">
-              <a className="hover:text-blue-500" href="#">
+              <a className="hover:text-blue-500" href="/">
                 Questions
               </a>
             </li>

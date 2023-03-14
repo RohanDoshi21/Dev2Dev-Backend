@@ -2,6 +2,8 @@ import Header from "./Header";
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { searchURL } from "../constants/urls";
+import arrrowUp from "../assets/up-arrow.png";
+import arrrowDown from "../assets/down-arrow.png";
 
 const fetchQuestions = async (query) => {
   try {
@@ -25,6 +27,7 @@ const SearchPage = (props) => {
   console.log("Query: ", query);
 
   useEffect(() => {
+    console.log(searchURL + query);
     fetch(searchURL + query)
       .then((response) => response.json())
       .then((data) => setQuestions(data["hits"]))
@@ -46,56 +49,63 @@ const SearchPage = (props) => {
     <div>
       <Header />
       {questions.map((question) => (
-        <Link to={`/question/${question.id}`}>
-          <div className="border border-gray-200 shadow-lg rounded-lg p-4 mb-1">
-            <div className="flex items-center mb-2">
-              <h2 className="text-lg font-medium text-gray-900 mr-2">
-                {question.title}
-              </h2>
-              <span
-                className={`bg-${
-                  question.status === "OPEN" ? "green" : "red"
-                }-500 text-white rounded-full px-2 py-1 text-xs font-medium`}
+        <Link
+          to={`/question/${question._id}`}
+          className="w-full bg-opacity-50 bg-white"
+        >
+          <div className="border-gray-200 shadow-md border flex flex-row gap-8 rounded-lg p-4 mb-3 relative w-full">
+            <div className="flex flex-col items-end  gap-4 justify-center  mr-2  w-[1rem]">
+              <button
+                className="text-gray-600 hover:text-gray-800 flex  flex-row focus:outline-none focus:text-gray-800"
+                aria-label="Upvote"
               >
-                {question.status}
-              </span>
+                <img
+                  src={arrrowUp}
+                  className="h-5 w-5 mx-2"
+                  alt="up arrow"
+                ></img>
+
+                <span className="text-xs font-medium">
+                  {question["_source"].upvotes}
+                </span>
+              </button>
+              <button
+                className="text-gray-600 hover:text-gray-800 flex flex-row  focus:outline-none focus:text-gray-800"
+                aria-label="Downvote"
+              >
+                <img
+                  src={arrrowDown}
+                  className="h-5 w-5 mx-2"
+                  alt="up arrow"
+                ></img>
+                <span className="text-xs font-medium">
+                  {question["_source"].downvotes}
+                </span>
+              </button>
             </div>
-            <p className="text-gray-700 mb-2">{question.description}</p>
-            <div className="flex items-center justify-between">
-              <p className="text-gray-600 text-xs">
-                {question.email} • Posted on {formatedDate(question.created_at)}
-              </p>
-              <div className="flex items-center">
-                <button
-                  className="mr-2 text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
-                  aria-label="Upvote"
-                >
-                  <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 3.414l5.657 5.657-1.414 1.414L10 6.243 5.757 10.5 4.343 9.086 10 3.414zM10 16.586l-5.657-5.657 1.414-1.414L10 13.757l4.243-4.243 1.414 1.414L10 16.586z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="text-xs font-medium">
-                    {question.upvotes}
-                  </span>
-                </button>
-                <button
-                  className="text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
-                  aria-label="Downvote"
-                >
-                  <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 16.586l-5.657-5.657 1.414-1.414L10 13.757l4.243-4.243 1.414 1.414L10 16.586z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="text-xs font-medium">
-                    {question.downvotes}
-                  </span>
-                </button>
+            <div className="flex flex-col gap-3 mb-2">
+              <div className="items-start justify-start text-start">
+                <div className="flex flex-row">
+                  <h2 className="text-lg font-medium text-[#2C74B3] text-bold mr-2">
+                    {question["_source"].title}
+                    <span
+                      className={`${
+                        question["_source"].status === "OPEN"
+                          ? "bg-[#a6f1c6] text-[#15452a]"
+                          : "bg-[#fb919d] text-[#bc3646]"
+                      } pb-1  mx-2 rounded-full px-2 py-1 text-xs font-medium`}
+                    >
+                      {question["_source"].status}
+                    </span>
+                  </h2>
+                </div>
+                <div className="text-gray-700 mb-2">
+                  {question["_source"].description}
+                </div>
+              </div>
+              <div className="text-gray-600 text-end items-end justify-end text-xs absolute bottom-3 right-5">
+                {question["_source"].email} • Posted on{" "}
+                {formatedDate(question["_source"].created_at)}
               </div>
             </div>
           </div>
