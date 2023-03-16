@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { authCheck } from "../AuthChecker";
-import { getQuestionsUrl, answerUrl, voteAnswerUrl, voteQuestionUrl } from "../constants/urls";
+import {
+	getQuestionsUrl,
+	answerUrl,
+	voteAnswerUrl,
+	voteQuestionUrl,
+} from "../constants/urls";
 import formattedDate from "../utils/dateFormattor";
 import Axios from "axios";
 import arrrowUp from "../assets/up-arrow.png";
@@ -45,7 +50,7 @@ const DisplayQuestionAndAnswers = (props) => {
 
 	const addAnswer = async () => {
 		if (!authCheck()) {
-			alert("Please Login to answer");
+			toast.warning("Please Login to answer");
 			return;
 		}
 
@@ -71,11 +76,11 @@ const DisplayQuestionAndAnswers = (props) => {
 			console.log(response);
 			setAddAnswerVariable("");
 			fetchAnswersByQuestionId(id).then((data) => setAnswers(data));
-			alert("Answer Added Succesfully");
+			toast.success("Answer Added Succesfully");
 		});
 	};
 
-	const addVote = async (id, vote, type) => {
+	const addVote = async (kId, vote, type) => {
 		if (!authCheck()) {
 			toast.error("Please Login to vote");
 			return;
@@ -93,23 +98,27 @@ const DisplayQuestionAndAnswers = (props) => {
 		var typeQ = type === "question" ? voteQuestionUrl : voteAnswerUrl;
 
 		Axios.post(
-			typeQ + id,
+			typeQ + kId,
 			{
 				vote: vote,
 			},
 			config
-		).then((response) => {
-			console.log(response);
-			if (type === "question") {
-				fetchQuestionById(id).then((data) => setQuestion(data));
-			} else {
-			}
-			fetchAnswersByQuestionId(id).then((data) => setAnswers(data));
-			toast.success("Vote Added Succesfully");
-		}).catch((error) => {
-            console.log(error);
-            toast.error(error.response.data.error);
-        });
+		)
+			.then((response) => {
+				console.log(response);
+                // Update the state of the question and answers
+                if (type === "question") {
+                    fetchQuestionById(id).then((data) => setQuestion(data));
+                } else {
+                    fetchAnswersByQuestionId(id).then((data) => setAnswers(data));
+                }
+
+				toast.success("Vote Added Succesfully");
+			})
+			.catch((error) => {
+				console.log(error);
+				toast.error(error.response.data.error);
+			});
 	};
 
 	return (

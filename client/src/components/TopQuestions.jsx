@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 import arrrowUp from "../assets/up-arrow.png";
 import arrrowDown from "../assets/down-arrow.png";
-
+import { toast, ToastContainer } from "react-toastify";
 
 const fetchTopQuestions = async () => {
 	let response = await fetch(getQuestionsUrl);
@@ -37,7 +37,7 @@ const TopQuestions = () => {
 	function handleOnClick() {
 		console.log("clicked");
 		if (!authCheck()) {
-			alert("You need to be logged in to post a question");
+	        toast.warn("You need to be logged in to post a question");
 		} else {
 			setPostQuestion(true);
 		}
@@ -60,29 +60,29 @@ const TopQuestions = () => {
 				title: title,
 				description: description,
 			},
-			config,
+			config
 		).then((response) => {
 			console.log(response);
 			fetchTopQuestions().then((data) => setQuestions(data));
 			//setPostQuestion(false);
-			alert("Question posted successfully");
+			toast.success("Question posted successfully");
 		});
 	}
 
 	return (
-		<div
-			className="flex flex-col mx-36 justify-center items-center  bg-cover ">
+		<div className="flex flex-col mx-36 justify-center items-center  bg-cover ">
 			<div className="justify-center items-center w-2/5 flex mt-5 ">
-				{postQuestion == false &&
+				{postQuestion == false && (
 					<button
 						onClick={handleOnClick}
 						className="bg-[#0A2647] hover:bg-[#2C74B3] text-white font-bold  w-full py-2 px-4 rounded-2xl mb-4 my-3"
 					>
 						Post a question
 					</button>
-				}
+				)}
 			</div>
-			{// Create a form to post a question
+			{
+				// Create a form to post a question
 				postQuestion === true && (
 					<div className="flex flex-col mx-auto w-3/5 mb-10 p-2">
 						<div className="justify-center items-center">
@@ -141,9 +141,13 @@ const TopQuestions = () => {
 							</button>
 						</div>
 					</div>
-				)}
+				)
+			}
 			{questions.map((question) => (
-				<Link to={`/question/${question.id}`} className="w-full bg-opacity-50 bg-white">
+				<Link
+					to={`/question/${question.id}`}
+					className="w-full bg-opacity-50 bg-white"
+				>
 					<div className="border-gray-200 shadow-md border flex flex-row gap-8 rounded-lg p-4 mb-3 relative w-full">
 						<div className="flex flex-col items-end  gap-4 justify-center  mr-2  w-[1rem]">
 							<button
@@ -180,10 +184,11 @@ const TopQuestions = () => {
 									<h2 className="text-lg font-medium text-[#2C74B3] text-bold mr-2">
 										{question.title}
 										<span
-											className={`${question.status === "OPEN"
-												? "bg-[#a6f1c6] text-[#15452a]"
-												: "bg-[#fb919d] text-[#bc3646]"
-												} pb-1  mx-2 rounded-full px-2 py-1 text-xs font-medium`}
+											className={`${
+												question.status === "OPEN"
+													? "bg-[#a6f1c6] text-[#15452a]"
+													: "bg-[#fb919d] text-[#bc3646]"
+											} pb-1  mx-2 rounded-full px-2 py-1 text-xs font-medium`}
 										>
 											{question.status}
 										</span>
@@ -201,6 +206,7 @@ const TopQuestions = () => {
 					</div>
 				</Link>
 			))}
+			<ToastContainer />
 		</div>
 	);
 };
