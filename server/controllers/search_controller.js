@@ -7,30 +7,28 @@ const esClient = require("../db/elastic_connect");
 const phraseSearch = async (_index, _type, phrase) => {
   try {
     // const { rows } = await client.query(`
-    //   SELECT id, description, title, created_at, status, upvotes, downvotes, owner FROM Question
-    // `);
-    // const { rows } = await client.query(`
-    //   SELECT * FROM Question INNER JOIN Users ON Question.owner = User.id
+    // SELECT Question.*, Users.first_name, Users.last_name, Users.email
+    // FROM Question
+    // INNER JOIN Users
+    // ON Question.owner = Users.id
+    // WHERE Question.owner = Users.id
     // `);
     const { rows } = await client.query(`
-    SELECT Question.*, Users.first_name, Users.last_name, Users.email
+    SELECT Question.*, Users.first_name, Users.last_name, Users.email,
+    string_agg(Answer.description,': ') AS answers
     FROM Question
     INNER JOIN Users
     ON Question.owner = Users.id
-    WHERE Question.owner = Users.id
+    INNER JOIN Answer
+    ON Answer.question_id = Question.id
+    GROUP BY Question.id, Users.first_name, Users.last_name, Users.email
     `);
 
     console.log("ROWS: ", rows);
-    // console.log("phrase: ", phrase);
-    // console.log("index: ", _index);
-    // console.log("type: ", _type);
 
     const index = "myindex";
 
     try {
-      // await esClient.indices.delete({
-      //   index: index,
-      // });
       await esClient.bulk({
         body: rows.flatMap((row) => [
           { index: { _index: index, _id: row.id } },
@@ -46,6 +44,7 @@ const phraseSearch = async (_index, _type, phrase) => {
             first_name: row.first_name,
             last_name: row.last_name,
             email: row.email,
+            answers: row.answers,
           },
         ]),
       });
@@ -63,7 +62,7 @@ const phraseSearch = async (_index, _type, phrase) => {
       body: {
         query: {
           multi_match: {
-            fields: ["description", "title"],
+            fields: ["description", "title", "answers"],
             query: phrase,
             type: "phrase_prefix",
           },
@@ -85,6 +84,7 @@ const phraseSearch = async (_index, _type, phrase) => {
           fields: {
             description: {},
             title: {},
+            answers: {},
           },
         },
       },
