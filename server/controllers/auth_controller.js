@@ -56,7 +56,6 @@ exports.signup = async (req, res) => {
 		const token = await generateUserToken(data.rows[0].id);
 		return res.json({ data: { token: token, user: { ...data.rows[0] } } });
 	} catch (err) {
-		console.log(err);
 		const duplicateError = err.message.split(" ").pop().replaceAll('"', "");
 		if (duplicateError === "users_email_key") {
 			return res.status(409).json({
