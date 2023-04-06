@@ -258,7 +258,7 @@ const DisplayQuestionAndAnswers = (props) => {
 								}
 							/>
 						</div>
-
+						<ToastContainer />
 						<div className="flex flex-row my-2">
 							<div className="text-sm text-gray-500">
 								<button
@@ -273,7 +273,6 @@ const DisplayQuestionAndAnswers = (props) => {
 					</div>
 				</div>
 			</div>
-			<ToastContainer />
 		</div>
 	);
 };
