@@ -18,8 +18,8 @@ const fetchTopQuestions = async () => {
 const TopQuestions = () => {
 
     console.log(process.env.NODE_ENV);
-
-    console.log(process.env.BACKEND_BASE_URL);
+    const baseUrl = process.env.REACT_APP_BACKEND_BASE_URL;
+    console.log(baseUrl);
 
 
 	const [questions, setQuestions] = useState([]);
