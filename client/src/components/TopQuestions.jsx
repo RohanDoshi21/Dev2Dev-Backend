@@ -16,6 +16,12 @@ const fetchTopQuestions = async () => {
 };
 
 const TopQuestions = () => {
+
+    console.log(process.env.NODE_ENV);
+
+    console.log(process.env.BACKEND_BASE_URL);
+
+
 	const [questions, setQuestions] = useState([]);
 	const [postQuestion, setPostQuestion] = useState(false);
 	const [title, setTitle] = useState("");
