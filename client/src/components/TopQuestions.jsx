@@ -8,9 +8,8 @@ import Cookies from "universal-cookie";
 import arrrowUp from "../assets/up-arrow.png";
 import arrrowDown from "../assets/down-arrow.png";
 
-const fetchTopQuestions = async (option = "asc") => {
-  let response = await fetch(getQuestionsUrl + "?sort=${option}");
-
+const fetchTopQuestions = async (option) => {
+  let response = await fetch(getQuestionsUrl + `?sort=${option}`);
   const data = await response.json();
   return data["data"]["questions"];
 };
@@ -19,7 +18,7 @@ const options = [
   { value: "asc", label: "Most recent" },
   { value: "desc", label: "Oldest" },
   { value: "by_upvotes", label: "By upvotes" },
-  { value: "most_cmt", label: "Most Commented" },
+  { value: "most_ans", label: "Most Commented" },
 ];
 
 const TopQuestions = () => {
@@ -28,11 +27,11 @@ const TopQuestions = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const defaultValue = options[0];
+  const defaultValue = options[1];
   const [selectedOption, setSelectedOption] = useState(defaultValue);
 
   useEffect(() => {
-    fetchTopQuestions().then((data) => setQuestions(data));
+    fetchTopQuestions(selectedOption).then((data) => setQuestions(data));
   }, []);
 
   function formatedDate(createdAt) {
@@ -158,9 +157,12 @@ const TopQuestions = () => {
           isSearchable={false}
           isClearable={false}
           value={selectedOption}
-          onChange={(option) => {
-            setSelectedOption(option);
-            fetchTopQuestions(option).then((data) => setQuestions(data));
+          onChange={(opt) => {
+            console.log("Selected ", opt);
+            setSelectedOption(opt);
+            fetchTopQuestions(selectedOption["value"]).then((data) =>
+              setQuestions(data)
+            );
           }}
         />
       }
