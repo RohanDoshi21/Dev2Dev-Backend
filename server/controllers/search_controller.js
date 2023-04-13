@@ -8,6 +8,11 @@ const phraseSearch = async (_index, _type, phrase) => {
   try {
     hits = [];
     let index = "myindex";
+    // const indexData = await esClient.get({
+    //   index: "myindex",
+    //   // id: parseInt(),
+    // });
+    // console.log("Searching in this: ", indexData);
     const searchResult = await esClient.search({
       index: index,
       type: _type,

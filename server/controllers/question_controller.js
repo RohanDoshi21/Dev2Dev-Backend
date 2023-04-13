@@ -1,5 +1,10 @@
 const client = require("../db/connect");
-const { addToIndex } = require("./index_controller");
+const esClient = require("../db/elastic_connect");
+const {
+  addToIndex,
+  removeFromIndex,
+  updateToIndex,
+} = require("./index_controller");
 
 exports.retrieveQuestions = async (req, res) => {
   // Pagination logic
@@ -8,10 +13,34 @@ exports.retrieveQuestions = async (req, res) => {
   let page = parseInt(req.query.page) || 1;
   let offset = (page - 1) * questionsPerPage;
 
-  // Also send the owner's name along with the question
-  let query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id LIMIT $1 OFFSET $2`;
+  const option = req.query.sort;
+  console.log("Option is: ", option);
+  let query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.created_at LIMIT $1 OFFSET $2 `;
+  switch (option) {
+    case "asc":
+      query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.created_at ASC LIMIT $1 OFFSET $2 `;
+      break;
 
-  // let query = "select * from Question LIMIT $1 OFFSET $2";
+    case "desc":
+      query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.created_at DESC LIMIT $1 OFFSET $2 `;
+      break;
+
+    case "by_upvotes":
+      query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.upvotes DESC LIMIT $1 OFFSET $2 `;
+      break;
+
+    case "most_ans":
+      query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email, COALESCE(COUNT(ans.id), 0) as ans_count from Question q join Users u on q.owner = u.id 
+          LEFT JOIN Answer ans ON ans.question_id=q.id 
+          GROUP BY q.id, u.first_name, u.last_name, u.email
+          ORDER BY ans_count DESC LIMIT $1 OFFSET $2 `;
+      break;
+
+    default:
+      query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.created_at LIMIT $1 OFFSET $2 `;
+      break;
+  }
+
   try {
     const data = await client.query(query, [questionsPerPage, offset]);
     return res.json({ data: { questions: data.rows } });
@@ -52,38 +81,39 @@ exports.createQuestion = async (req, res) => {
   ];
 
   let indexDoc = {};
-
   try {
     const response = await client.query(
       `SELECT first_name, last_name, email FROM Users WHERE id =  $1`,
       [req.user.id]
     );
     const userData = response["rows"][0];
-    console.log("New user: ", userData);
-    indexDoc = {
-      description: req.body.description,
-      title: req.body.title,
-      created_at: date,
-      status: "OPEN",
-      upvotes: 0,
-      downvotes: 0,
-      owner: req.user.id,
-      first_name: userData["first_name"],
-      last_name: userData["last_name"],
-      email: userData["email"],
-      answers: null,
-    };
+
+    try {
+      const data = await client.query(query, values);
+      console.log("Returned DATA: ", data);
+      indexDoc = {
+        id: data["rows"][0]["id"],
+        description: req.body.description,
+        title: req.body.title,
+        created_at: date,
+        status: "OPEN",
+        upvotes: 0,
+        downvotes: 0,
+        owner: req.user.id,
+        first_name: userData["first_name"],
+        last_name: userData["last_name"],
+        email: userData["email"],
+        answers: null,
+      };
+      console.log("Index doc: ", indexDoc);
+      await addToIndex(indexDoc);
+      return res.json({ data: { question: { ...data.rows[0] } } });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Internal Server Error." });
+    }
   } catch (error) {
     console.log("Could not fetch user info");
-  }
-
-  try {
-    const data = await client.query(query, values);
-    await addToIndex(indexDoc);
-    return res.json({ data: { question: { ...data.rows[0] } } });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Internal Server Error." });
   }
 };
 
@@ -97,16 +127,41 @@ exports.updateQuestion = async (req, res) => {
     req.user.id,
     req.body.status,
   ];
-
   try {
     const data = await client.query(query, values);
+    console.log("Returned after updation", data.rows);
+
     if (data.rows.length === 0) {
       return res.status(404).json({
         error:
           "Question not found or current user doesn't have permission to modify the question",
       });
     } else {
-      return res.json({ data: { question: { ...data.rows[0] } } });
+      try {
+        const indexData = await esClient.get({
+          index: "myindex",
+          id: parseInt(req.params.id),
+        });
+        const indexDoc = {
+          id: parseInt(req.params.id),
+          description: req.body.description,
+          title: req.body.title,
+          created_at: indexData["_source"]["created_at"],
+          status: indexData["_source"]["status"],
+          upvotes: indexData["_source"]["upvotes"],
+          downvotes: indexData["_source"]["downvotes"],
+          owner: indexData["_source"]["owner"],
+          first_name: indexData["_source"]["first_name"],
+          last_name: indexData["_source"]["last_name"],
+          email: indexData["_source"]["email"],
+          answers: indexData["_source"]["answers"],
+        };
+        updateToIndex(indexDoc);
+        console.log("Index data: ", indexData);
+        return res.json({ data: { question: { ...data.rows[0] } } });
+      } catch (error) {
+        console.log(error);
+      }
     }
   } catch (err) {
     console.log(err);
@@ -126,6 +181,12 @@ exports.deleteQuestion = async (req, res) => {
           "Question not found or current user doesn't have permission to delete the question",
       });
     } else {
+      try {
+        const res = await removeFromIndex(req.params.id);
+        console.log(res);
+      } catch (error) {
+        return res.json({ msg: "Could not delete index" });
+      }
       return res.json({ data: "Question deleted successfully" });
     }
   } catch (err) {
