@@ -7,16 +7,22 @@ import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 import arrrowUp from "../assets/up-arrow.png";
 import arrrowDown from "../assets/down-arrow.png";
+import QuestionPageSwitcher from "./QuestionPageSwitcher";
 
-const fetchTopQuestions = async (option) => {
-  let response = await fetch(getQuestionsUrl + `?sort=${option}`);
+const fetchTopQuestions = async (option, page) => {
+  let response = await fetch(
+    getQuestionsUrl + `?page=${page}&` + `sort=${option}`
+  );
+  // let response = await fetch(
+  //   getQuestionsUrl + `?page=${page}&` + `sort=ASC`
+  // );
   const data = await response.json();
-  return data["data"]["questions"];
+  return data["data"];
 };
 
 const options = [
-  { value: "asc", label: "Most recent" },
-  { value: "desc", label: "Oldest" },
+  { value: "desc", label: "Most recent" },
+  { value: "asc", label: "Oldest" },
   { value: "by_upvotes", label: "By upvotes" },
   { value: "most_ans", label: "Most Commented" },
 ];
@@ -26,13 +32,26 @@ const TopQuestions = () => {
   const [postQuestion, setPostQuestion] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(10);
 
   const defaultValue = options[0];
   const [selectedOption, setSelectedOption] = useState(defaultValue);
 
   useEffect(() => {
-    fetchTopQuestions(selectedOption).then((data) => setQuestions(data));
+    fetchTopQuestions(selectedOption["value"], currentPage).then((data) => {
+      setQuestions(data["questions"]);
+      setTotalPages(data["pages"]);
+    });
   }, []);
+
+  const onPageChange = async (newPage) => {
+    setCurrentPage(newPage);
+    fetchTopQuestions(selectedOption["value"], newPage).then((data) => {
+      setQuestions(data["questions"]);
+      setTotalPages(data["pages"]);
+    });
+  };
 
   function formatedDate(createdAt) {
     const date = new Date(createdAt);
@@ -43,7 +62,6 @@ const TopQuestions = () => {
   }
 
   function handleOnClick() {
-    console.log("clicked");
     if (!authCheck()) {
       alert("You need to be logged in to post a question");
     } else {
@@ -61,7 +79,6 @@ const TopQuestions = () => {
       },
     };
 
-    console.log("posting");
     Axios.post(
       getQuestionsUrl,
       {
@@ -70,8 +87,7 @@ const TopQuestions = () => {
       },
       config
     ).then((response) => {
-      console.log(response);
-      fetchTopQuestions().then((data) => setQuestions(data));
+      fetchTopQuestions().then((data) => setQuestions(data["questions"]));
       //setPostQuestion(false);
       alert("Question posted successfully");
     });
@@ -158,10 +174,9 @@ const TopQuestions = () => {
           isClearable={false}
           value={selectedOption}
           onChange={(opt) => {
-            console.log("Selected ", opt);
             setSelectedOption(opt);
-            fetchTopQuestions(opt["value"]).then((data) =>
-              setQuestions(data)
+            fetchTopQuestions(opt["value"], currentPage).then((data) =>
+              setQuestions(data["questions"])
             );
           }}
         />
@@ -224,6 +239,11 @@ const TopQuestions = () => {
           </div>
         </Link>
       ))}
+      <QuestionPageSwitcher
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+        totalPages={totalPages}
+      />
     </div>
   );
 };

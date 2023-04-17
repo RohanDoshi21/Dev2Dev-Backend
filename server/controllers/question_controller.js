@@ -9,13 +9,13 @@ const {
 exports.retrieveQuestions = async (req, res) => {
   // Pagination logic
   // Page size is defaulted to 20
-  let questionsPerPage = 20;
+  let questionsPerPage = 10;
   let page = parseInt(req.query.page) || 1;
   let offset = (page - 1) * questionsPerPage;
 
   const option = req.query.sort;
   console.log("Option is: ", option);
-  let query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.created_at LIMIT $1 OFFSET $2 `;
+  let query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.created_at DESC LIMIT $1 OFFSET $2 `;
   switch (option) {
     case "asc":
       query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id ORDER BY q.created_at ASC LIMIT $1 OFFSET $2 `;
@@ -43,7 +43,13 @@ exports.retrieveQuestions = async (req, res) => {
 
   try {
     const data = await client.query(query, [questionsPerPage, offset]);
-    return res.json({ data: { questions: data.rows } });
+    const pageData = await client.query(`SELECT COUNT(id) FROM Question`);
+    return res.json({
+      data: {
+        questions: data.rows,
+        pages: Math.ceil(pageData.rows[0]["count"] / questionsPerPage),
+      },
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Internal Server Error." });
