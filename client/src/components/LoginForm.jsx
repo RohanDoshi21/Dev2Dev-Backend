@@ -36,6 +36,7 @@ const LoginForm = () => {
       // cookies.set("jwt_authorization", token);
       localStorage.setItem("jwt_authorization", token);
       localStorage.setItem("username", data["data"]["user"]["first_name"]);
+      localStorage.setItem("userID", data["data"]["user"]["id"]);
       console.log("stored ", localStorage.getItem("jwt_authorization"));
       toast.success("Logged in!", {
         position: "top-center",

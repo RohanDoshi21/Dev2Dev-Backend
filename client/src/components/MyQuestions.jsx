@@ -1,6 +1,6 @@
 import React, { useState, useEffect, lazy } from "react";
 import { authCheck, config } from "../AuthChecker";
-import { getQuestionsUrl } from "../constants/urls";
+import { getMyQuestionsUrl, getQuestionsUrl } from "../constants/urls";
 import Axios from "axios";
 import Select from "react-select";
 import { Link } from "react-router-dom";
@@ -9,10 +9,17 @@ import arrrowUp from "../assets/up-arrow.png";
 import arrrowDown from "../assets/down-arrow.png";
 import QuestionPageSwitcher from "./QuestionPageSwitcher";
 
-const fetchTopQuestions = async (option, page) => {
-  let response = await fetch(getQuestionsUrl + `?page=${page}&` + `sort=${option}`);
-  const data = await response.json();
-  return data["data"];
+const fetchMyQuestions = async (option, page) => {
+  const id = localStorage.getItem("userID");
+  const url =
+    getMyQuestionsUrl + `/` + `${id}` + `?page=${page}&` + `sort=${option}`;
+  console.log("Fetching from ", url);
+  console.log("USer ID: ", id);
+  console.log("Option: ", option);
+  let response = await fetch(url);
+  const res = await response.json();
+  console.log("Received: ", res);
+  return res["data"];
 };
 
 const options = [
@@ -22,34 +29,33 @@ const options = [
   { value: "most_ans", label: "Most answered" },
 ];
 
-const TopQuestions = () => {
+const MyQuestions = () => {
+  console.log("Type: ");
   const [questions, setQuestions] = useState([]);
   const [postQuestion, setPostQuestion] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
 
   const defaultValue = options[0];
   const [selectedOption, setSelectedOption] = useState(defaultValue);
 
   useEffect(() => {
-    fetchTopQuestions(selectedOption["value"], currentPage).then(
-      (data) => {
-        setQuestions(data["questions"]);
-        setTotalPages(data["pages"]);
-      }
-    );
+    fetchMyQuestions(selectedOption["value"], currentPage).then((data) => {
+      console.log("Tha data updated is: ", data["pages"]);
+      setQuestions(data["questions"]);
+      console.log("Tha questions updated is: ", questions);
+      setTotalPages(data["pages"]);
+    });
   }, []);
 
   const onPageChange = async (newPage) => {
     setCurrentPage(newPage);
-    fetchTopQuestions(selectedOption["value"], newPage).then(
-      (data) => {
-        setQuestions(data["questions"]);
-        setTotalPages(data["pages"]);
-      }
-    );
+    fetchMyQuestions(selectedOption["value"], newPage).then((data) => {
+      setQuestions(data["questions"]);
+      setTotalPages(data["pages"]);
+    });
   };
 
   function formatedDate(createdAt) {
@@ -86,7 +92,7 @@ const TopQuestions = () => {
       },
       config
     ).then((response) => {
-      fetchTopQuestions(selectedOption).then((data) =>
+      fetchMyQuestions(selectedOption).then((data) =>
         setQuestions(data["questions"])
       );
       //setPostQuestion(false);
@@ -176,8 +182,8 @@ const TopQuestions = () => {
           value={selectedOption}
           onChange={(opt) => {
             setSelectedOption(opt);
-            fetchTopQuestions(opt["value"], currentPage).then(
-              (data) => setQuestions(data["questions"])
+            fetchMyQuestions(opt["value"], currentPage).then((data) =>
+              setQuestions(data["questions"])
             );
           }}
         />
@@ -249,4 +255,4 @@ const TopQuestions = () => {
   );
 };
 
-export default TopQuestions;
+export default MyQuestions;

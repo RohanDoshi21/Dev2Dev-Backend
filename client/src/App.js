@@ -12,11 +12,13 @@ import bgimage from "../src/assets/background.jpg";
 import bgimage2 from "../src/assets/bgop2.jpeg";
 import { ToastContainer, toast } from "react-toastify";
 import SearchPage from "./components/SearchPage";
+import MyQuestions from "./components/MyQuestions";
 
 function App() {
   //   const [isLogin, setType] = useState(authCheck());
   // localStorage.removeItem("jwt_authorization");
   //   logOut();
+
   return (
     <Router>
       <div
@@ -47,6 +49,10 @@ function App() {
           <Route path="/question/:id">
             <Header />
             <DisplayQuestionAndAnswers />
+          </Route>
+          <Route path="/questions/my_questions/:id">
+            <Header />
+            <MyQuestions />
           </Route>
         </Switch>
       </div>

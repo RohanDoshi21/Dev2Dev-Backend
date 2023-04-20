@@ -1,5 +1,6 @@
 export const baseUrl = "http://localhost:8000";
 export const getQuestionsUrl = baseUrl + "/questions";
+export const getMyQuestionsUrl = baseUrl + "/questions/my_questions";
 export const signupUrl = baseUrl + "/auth/signup";
 export const loginUrl = baseUrl + "/auth/login";
 export const logoutUrl = baseUrl + "/auth/logout";

@@ -56,6 +56,58 @@ exports.retrieveQuestions = async (req, res) => {
   }
 };
 
+exports.retrieveMyQuestions = async (req, res) => {
+  console.log("Called My questions: ", parseInt(req.params.id));
+  let questionsPerPage = 10;
+  let page = parseInt(req.query.page) || 1;
+  let offset = (page - 1) * questionsPerPage;
+
+  const option = req.query.sort;
+  console.log("Option is: ", option);
+
+  let query = `SELECT q.* FROM Question q WHERE owner = $1 ORDER BY q.created_at DESC LIMIT $2 OFFSET $3`;
+  switch (option) {
+    case "asc":
+      query = `SELECT q.* FROM Question q WHERE owner = $1 ORDER BY q.created_at ASC LIMIT $2 OFFSET $3`;
+      break;
+
+    case "desc":
+      query = `SELECT q.* FROM Question q WHERE owner = $1 ORDER BY q.created_at DESC LIMIT $2 OFFSET $3`;
+      break;
+
+    case "by_upvotes":
+      query = `SELECT q.* FROM Question q WHERE owner = $1 ORDER BY q.upvotes DESC LIMIT $2 OFFSET $3`;
+      break;
+
+    case "most_ans":
+      query = `SELECT q.*, COALESCE(COUNT(ans.id), 0) as ans_count FROM Question q LEFT JOIN Answer ans ON ans.question_id = q.id  WHERE q.owner=$1 GROUP BY q.id ORDER BY ans_count DESC LIMIT $2 OFFSET $3`;
+      break;
+
+    default:
+      query = `SELECT q.* FROM Question q WHERE owner = $1 ORDER BY q.created_at DESC LIMIT $2 OFFSET $3`;
+      break;
+  }
+
+  try {
+    const data = await client.query(query, [
+      parseInt(req.params.id),
+      questionsPerPage,
+      offset,
+    ]);
+    console.log("My questions: ", data.rows);
+    const pageData = await client.query(`SELECT COUNT(id) FROM Question`);
+    return res.json({
+      data: {
+        questions: data.rows,
+        pages: Math.ceil(pageData.rows[0]["count"] / questionsPerPage),
+      },
+    });
+  } catch (error) {
+    console.log("ERROR!!!!!!!!! ", error);
+    return res.json({ error: "Could not get your questions!" });
+  }
+};
+
 exports.retrieveQuestionById = async (req, res) => {
   // Add owener's name and email to the question
   let query = `select q.*, concat(u.first_name, ' ', u.last_name) as name, u.email from Question q join Users u on q.owner = u.id where q.id = $1`;

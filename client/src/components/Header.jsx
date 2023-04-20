@@ -17,7 +17,9 @@ const Header = () => {
   // console.log("Acc status ", isAuthenticated);
   // const isAuthenticated = authCheck();
   const userName = localStorage.getItem("username");
-  // console.log("Acc status ", isAuthenticated);
+  const userId = localStorage.getItem("userID");
+
+  console.log("Acc status ", userId);
 
   const handleLogout = async () => {
     try {
@@ -106,9 +108,14 @@ const Header = () => {
         <nav className="flex-1">
           <ul className="flex justify-end ">
             <li className="mr-4">
-              <a className="hover:text-blue-500" href="/">
-                Questions
-              </a>
+              {isAuthenticated && (
+                <a
+                  className="hover:text-blue-500"
+                  href={`/questions/my_questions/${userId}`}
+                >
+                  My Questions
+                </a>
+              )}
             </li>
             <li className="mr-4">
               <a className="hover:text-blue-500" href="#">

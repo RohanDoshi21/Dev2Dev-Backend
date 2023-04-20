@@ -6,11 +6,14 @@ const {
 	createQuestion,
 	updateQuestion,
 	deleteQuestion,
+	retrieveMyQuestions,
 } = require("../controllers/question_controller");
 
 let router = express.Router();
 
 router.get("/", retrieveQuestions);
+
+router.get("/my_questions/:id/", retrieveMyQuestions);
 
 router.get("/:id", retrieveQuestionById);
 
