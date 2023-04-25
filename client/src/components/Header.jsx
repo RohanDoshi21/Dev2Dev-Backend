@@ -33,6 +33,9 @@ const Header = () => {
         position: "top-center",
         hideProgressBar: true,
       });
+      localStorage.removeItem("userID");
+      localStorage.removeItem("username");
+      localStorage.removeItem("jwt_authorization");
     } catch (e) {
       toast.error("Failed to logout", {
         position: "top-center",
